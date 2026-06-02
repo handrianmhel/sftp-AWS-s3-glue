@@ -1,10 +1,22 @@
 ﻿# Copy to terraform.tfvars (gitignored) and adjust as needed.
 # cp terraform.tfvars.example terraform.tfvars
+#
+# Or use env-specific files from the repo root:
+# terraform apply -var-file=..\..\env\greenfield-apse1.tfvars
 
 # aws_region = "ap-southeast-1"
 # name_prefix = "sftp-s3-glue-rd"
+
+# Greenfield (create new bucket):
+# use_existing_bucket = false
 # bucket_name = null
-# object_prefix = "raw/"
+# object_prefixes = ["raw/"]
+
+# Existing bucket (same account/region as deploy credentials):
+# use_existing_bucket = true
+# bucket_name = "rccglobe-demo-bucket"
+# object_prefixes = ["public-folder/", "restricted-folder/"]
+
 # lambda_runtime = "dotnet8"
 # lambda_handler = "RdSuccessLogger::RdSuccessLogger.Function::FunctionHandler"
 # lambda_architectures = ["x86_64"]
