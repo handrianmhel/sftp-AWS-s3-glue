@@ -1,0 +1,18 @@
+﻿# Copy to terraform.tfvars (gitignored) and adjust as needed.
+# cp terraform.tfvars.example terraform.tfvars
+
+# aws_region = "ap-southeast-1"
+# name_prefix = "sftp-s3-glue-rd"
+# bucket_name = null
+# object_prefix = "raw/"
+# lambda_runtime = "dotnet8"
+# lambda_handler = "RdSuccessLogger::RdSuccessLogger.Function::FunctionHandler"
+# lambda_architectures = ["x86_64"]
+# lambda_timeout = 10
+# lambda_memory = 128
+# log_retention_days = 7
+
+# tags = {
+#   Project = "sftp-AWS-s3-glue"
+#   Phase   = "1-RD"
+# }
