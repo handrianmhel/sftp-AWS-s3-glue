@@ -26,9 +26,11 @@ resource "aws_lambda_function" "success_logger" {
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
-  statement_id  = "AllowExecutionFromEventBridge"
+  for_each = toset(var.object_prefixes)
+
+  statement_id  = "AllowExecutionFromEventBridge-${local.eventbridge_rule_suffixes[each.value]}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.success_logger.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.s3_object_created.arn
+  source_arn    = aws_cloudwatch_event_rule.s3_object_created[each.value].arn
 }
