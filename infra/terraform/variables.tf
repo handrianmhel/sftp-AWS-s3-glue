@@ -11,15 +11,31 @@ variable "name_prefix" {
 }
 
 variable "bucket_name" {
-  description = "Optional override for S3 bucket name (must be globally unique)"
+  description = "S3 bucket name. Required when use_existing_bucket is true. Optional override when creating a new bucket."
   type        = string
   default     = null
+
+  validation {
+    condition     = !var.use_existing_bucket || (var.bucket_name != null && var.bucket_name != "")
+    error_message = "bucket_name must be set when use_existing_bucket is true."
+  }
 }
 
-variable "object_prefix" {
-  description = "S3 object key prefix filter for EventBridge rule"
-  type        = string
-  default     = "raw/"
+variable "object_prefixes" {
+  description = "S3 object key prefixes for EventBridge rules (trailing slash required, e.g. raw/)"
+  type        = list(string)
+  default     = ["raw/"]
+
+  validation {
+    condition     = length(var.object_prefixes) > 0
+    error_message = "object_prefixes must contain at least one prefix."
+  }
+}
+
+variable "use_existing_bucket" {
+  description = "When true, use an existing S3 bucket (var.bucket_name) instead of creating a new bucket"
+  type        = bool
+  default     = false
 }
 
 variable "lambda_runtime" {
