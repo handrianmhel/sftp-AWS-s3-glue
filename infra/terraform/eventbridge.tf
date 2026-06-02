@@ -1,6 +1,8 @@
 ﻿resource "aws_cloudwatch_event_rule" "s3_object_created" {
-  name           = "${var.name_prefix}-s3-object-created"
-  description    = "Route S3 Object Created events under ${var.object_prefix} to Lambda"
+  for_each = toset(var.object_prefixes)
+
+  name           = "${var.name_prefix}-s3-created-${local.eventbridge_rule_suffixes[each.value]}"
+  description    = "Route S3 Object Created events under ${each.value} to Lambda"
   event_bus_name = "default"
 
   event_pattern = jsonencode({
@@ -11,14 +13,16 @@
         name = [local.bucket_name]
       }
       object = {
-        key = [{ prefix = var.object_prefix }]
+        key = [{ prefix = each.value }]
       }
     }
   })
 }
 
 resource "aws_cloudwatch_event_target" "lambda" {
-  rule      = aws_cloudwatch_event_rule.s3_object_created.name
+  for_each = toset(var.object_prefixes)
+
+  rule      = aws_cloudwatch_event_rule.s3_object_created[each.value].name
   target_id = "SuccessLoggerLambda"
   arn       = aws_lambda_function.success_logger.arn
 }
