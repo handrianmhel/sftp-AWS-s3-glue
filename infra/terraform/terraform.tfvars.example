@@ -24,6 +24,10 @@
 # lambda_memory = 128
 # log_retention_days = 7
 
+# enable_bucket_lister = true
+# bucket_lister_timeout = 30
+# bucket_lister_memory = 256
+
 # tags = {
 #   Project = "sftp-AWS-s3-glue"
 #   Phase   = "1-RD"

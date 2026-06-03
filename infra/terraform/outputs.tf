@@ -32,3 +32,18 @@ output "lambda_handler" {
   description = "Assembly-qualified Lambda handler"
   value       = var.lambda_handler
 }
+
+output "bucket_lister_function_name" {
+  description = "Manual-invoke S3 bucket lister Lambda function name"
+  value       = var.enable_bucket_lister ? aws_lambda_function.bucket_lister[0].function_name : null
+}
+
+output "bucket_lister_arn" {
+  description = "Manual-invoke S3 bucket lister Lambda ARN"
+  value       = var.enable_bucket_lister ? aws_lambda_function.bucket_lister[0].arn : null
+}
+
+output "bucket_lister_log_group" {
+  description = "CloudWatch log group for BucketLister"
+  value       = var.enable_bucket_lister ? aws_cloudwatch_log_group.bucket_lister[0].name : null
+}
