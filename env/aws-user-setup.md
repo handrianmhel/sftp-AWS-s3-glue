@@ -107,7 +107,7 @@ aws sts get-caller-identity
 
 | When testing… | `AWS_PROFILE` | Var-file (after copy example → `.tfvars`) |
 |---------------|---------------|-------------------------------------------|
-| New Terraform bucket + `raw/` | `personal` or `rcc-mhel` | `env\greenfield-apse1.tfvars` |
+| New Terraform bucket + `raw/` | `personal` or `rcc-mhel` | `env\personal-apse1.tfvars` |
 | Existing `rccglobe-demo-bucket` + demo prefixes | `rcc-mhel` (bucket owner account) | `env\rcc-demo-apse1.tfvars` |
 
 ```powershell

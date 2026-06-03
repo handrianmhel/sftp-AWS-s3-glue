@@ -31,7 +31,7 @@ terraform apply -var-file=..\..\env\rcc-demo-apse1.tfvars
 
 | File | Mode | Bucket | Prefixes |
 |------|------|--------|----------|
-| `greenfield-apse1.tfvars.example` | Create new bucket | generated name | `raw/` |
+| `personal-apse1.tfvars.example` | Create new bucket | generated name | `raw/` |
 | `rcc-demo-apse1.tfvars.example` | Existing bucket | `rccglobe-demo-bucket` | `public-folder/`, `restricted-folder/` |
 
 ## Credentials
