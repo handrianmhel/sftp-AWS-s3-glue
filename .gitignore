@@ -6,6 +6,8 @@
 terraform.tfvars
 *.tfvars
 !terraform.tfvars.example
+env/*.tfvars
+!env/*.tfvars.example
 
 # .NET
 bin/
