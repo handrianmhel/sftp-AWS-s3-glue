@@ -2,9 +2,9 @@
 
 Switch deploy targets using three knobs (no code edits):
 
-1. **`AWS_PROFILE`** — which AWS account/credentials Terraform uses
-2. **`env/*.tfvars`** — region, bucket mode, prefix list (copy from `*.example`)
-3. **`terraform workspace`** (optional) — separate state per target
+1. **`AWS_PROFILE`** → ww/c AWS account/credentials Terraform uses
+2. **`env/*.tfvars`** → region, bucket mode, prefix list (copy from `*.example`)
+3. **`terraform workspace`** (optional) → separate state per target
 
 ## Quick start
 
@@ -39,3 +39,5 @@ terraform apply -var-file=..\..\env\rcc-demo-apse1.tfvars
 See [aws-user-setup.md](aws-user-setup.md) for `~/.aws/credentials`, `~/.aws/config`, STS assume-role, and required IAM actions.
 
 **Never commit** `env/*.tfvars` or access keys to this repository.
+
+After deploy, test the manual S3 lister: `terraform output bucket_lister_function_name`. See the **BucketLister (manual invoke)** section in [README.md](../README.md).

@@ -68,6 +68,24 @@ variable "lambda_memory" {
   default     = 128
 }
 
+variable "enable_bucket_lister" {
+  description = "Deploy the manual-invoke S3 bucket lister Lambda"
+  type        = bool
+  default     = true
+}
+
+variable "bucket_lister_timeout" {
+  description = "BucketLister Lambda timeout in seconds"
+  type        = number
+  default     = 30
+}
+
+variable "bucket_lister_memory" {
+  description = "BucketLister Lambda memory in MB"
+  type        = number
+  default     = 256
+}
+
 variable "log_retention_days" {
   description = "CloudWatch log retention in days"
   type        = number
