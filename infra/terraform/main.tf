@@ -6,7 +6,8 @@ locals {
     "${var.name_prefix}-${data.aws_caller_identity.current.account_id}-${var.aws_region}"
   )
 
-  lambda_function_name = "${var.name_prefix}-success-logger"
+  lambda_function_name          = "${var.name_prefix}-success-logger"
+  bucket_lister_function_name   = "${var.name_prefix}-bucket-lister"
 
   # Deterministic EventBridge rule name suffix per prefix (slashes -> dashes)
   eventbridge_rule_suffixes = {
