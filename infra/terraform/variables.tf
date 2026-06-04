@@ -92,11 +92,66 @@ variable "log_retention_days" {
   default     = 7
 }
 
+variable "enable_sftp" {
+  description = "Deploy EC2-hosted SFTPGo with S3 backend on local.bucket_name"
+  type        = bool
+  default     = true
+}
+
+variable "sftp_instance_type" {
+  description = "EC2 instance type for SFTPGo"
+  type        = string
+  default     = "t3.small"
+}
+
+variable "sftp_allowed_cidr_blocks" {
+  description = "CIDR blocks allowed to reach SFTP (and optional admin UI) on the instance"
+  type        = list(string)
+  default     = []
+}
+
+variable "sftp_port" {
+  description = "SFTP listen port on the instance"
+  type        = number
+  default     = 22
+}
+
+variable "sftp_admin_username" {
+  description = "SFTPGo web admin username (created on first init; change password after deploy)"
+  type        = string
+  default     = "sftpadmin"
+}
+
+variable "sftp_use_elastic_ip" {
+  description = "Associate an Elastic IP with the SFTPGo EC2 instance"
+  type        = bool
+  default     = true
+}
+
+variable "sftpgo_version" {
+  description = "SFTPGo release version to install on EC2 (GitHub release tag without v prefix)"
+  type        = string
+  default     = "2.6.6"
+}
+
+variable "sftp_enable_admin_ui_ingress" {
+  description = "Allow sftp_allowed_cidr_blocks to reach SFTPGo web admin on port 8080 for initial setup"
+  type        = bool
+  default     = true
+}
+
 variable "tags" {
   description = "Tags applied to supported resources"
   type        = map(string)
   default = {
     Project = "sftp-AWS-s3-glue"
     Phase   = "1-RD"
+  }
+}
+
+check "sftp_requires_cidr_when_enabled" {
+  assert {
+    condition     = !var.enable_sftp || length(var.sftp_allowed_cidr_blocks) > 0
+    error_message = "sftp_allowed_cidr_blocks must be set when enable_sftp is true (e.g. YOUR.PUBLIC.IP/32 in env/*.tfvars)."
   }
 }
