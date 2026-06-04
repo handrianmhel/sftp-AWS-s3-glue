@@ -8,6 +8,10 @@ locals {
 
   lambda_function_name          = "${var.name_prefix}-success-logger"
   bucket_lister_function_name   = "${var.name_prefix}-bucket-lister"
+  sftpgo_ec2_role_name          = "${var.name_prefix}-sftpgo-ec2"
+
+  # SFTP virtual path /raw -> S3 prefix raw/
+  sftp_virtual_folders = { for p in var.object_prefixes : trim(p, "/") => p }
 
   # Deterministic EventBridge rule name suffix per prefix (slashes -> dashes)
   eventbridge_rule_suffixes = {
