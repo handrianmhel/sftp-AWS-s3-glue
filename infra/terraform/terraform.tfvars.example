@@ -28,6 +28,14 @@
 # bucket_lister_timeout = 30
 # bucket_lister_memory = 256
 
+# enable_sftp = true
+# sftp_instance_type = "t3.small"
+# sftp_allowed_cidr_blocks = ["203.0.113.10/32"]
+# sftp_port = 22
+# sftp_use_elastic_ip = true
+# sftp_enable_admin_ui_ingress = true
+# sftpgo_version = "2.6.6"
+
 # tags = {
 #   Project = "sftp-AWS-s3-glue"
 #   Phase   = "1-RD"

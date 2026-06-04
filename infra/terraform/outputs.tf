@@ -47,3 +47,35 @@ output "bucket_lister_log_group" {
   description = "CloudWatch log group for BucketLister"
   value       = var.enable_bucket_lister ? aws_cloudwatch_log_group.bucket_lister[0].name : null
 }
+
+output "sftp_host" {
+  description = "Public host for SFTP (Elastic IP or instance public IP)"
+  value = var.enable_sftp ? (
+    var.sftp_use_elastic_ip ? aws_eip.sftpgo[0].public_ip : aws_instance.sftpgo[0].public_ip
+  ) : null
+}
+
+output "sftp_port" {
+  description = "SFTP port on the SFTPGo instance"
+  value       = var.enable_sftp ? var.sftp_port : null
+}
+
+output "sftp_instance_id" {
+  description = "EC2 instance ID running SFTPGo"
+  value       = var.enable_sftp ? aws_instance.sftpgo[0].id : null
+}
+
+output "sftpgo_ec2_role_arn" {
+  description = "IAM role ARN for SFTPGo EC2 (use in cross-account bucket policy template)"
+  value       = var.enable_sftp ? aws_iam_role.sftpgo_ec2[0].arn : null
+}
+
+output "sftp_setup_notes" {
+  description = "Post-deploy SFTP setup hints"
+  value = var.enable_sftp ? join(" ", [
+    "FileZilla: SFTP to sftp_host:sftp_port as user upload (see /root/sftpgo-setup-credentials.txt on instance via SSM).",
+    "Add SSH public keys in SFTPGo admin UI.",
+    "Upload to virtual paths matching object_prefixes (e.g. /raw/).",
+    "EventBridge/Lambda unchanged."
+  ]) : null
+}
