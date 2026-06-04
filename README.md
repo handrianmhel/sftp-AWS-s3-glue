@@ -158,6 +158,69 @@ aws lambda get-policy --function-name (terraform output -raw bucket_lister_funct
 # Often empty / no policy — expected for manual-only functions
 ```
 
+## SFTP / FileZilla (SFTPGo)
+
+EC2-hosted **SFTPGo** writes to the same bucket as S3+EventBridge/+Lambda+Cloudwatch stack (`local.bucket_name`). 
+
+    Uploads under `object_prefixes` still flow **S3 
+    
+      ├→ EventBridge 
+      
+        ├→ Lambda**.
+
+    or
+
+      ├→ Lambda (Manual Trigger)
+
+**License:** SFTPGo is **AGPL-3.0** - review license terms before production use.
+
+### Before apply
+
+Add to gitignored `env/personal-apse1.tfvars` (required when `enable_sftp = true`):
+
+```hcl
+enable_sftp = true
+sftp_allowed_cidr_blocks = ["YOUR.PUBLIC.IP/32"]
+```
+
+Find your IP: https://checkip.amazonaws.com
+
+### Deploy (includes SFTP resources)
+
+```powershell
+cd infra/terraform
+terraform apply "-var-file=../../env/personal-apse1.tfvars"
+```
+
+Outputs: `sftp_host`, `sftp_port`, `sftpgo_ec2_role_arn`.
+
+### FileZilla
+
+| Field | Value |
+|-------|--------|
+| Protocol | SFTP |
+| Host | `terraform output -raw sftp_host` |
+| Port | 22 |
+| User | `upload` (bootstrap; add SSH key in admin UI) |
+
+Upload to **`/raw/`** (or paths matching `object_prefixes`). Example remote path: `/raw/test-sftp.txt`.
+
+Bootstrap passwords: `/root/sftpgo-setup-credentials.txt` on the instance (SSM Session Manager). **Do not commit.**
+
+### SFTP acceptance
+
+1. SFTP upload under `/raw/`.
+2. Within ~2 min, CloudWatch log on `sftp-s3-glue-rd-success-logger` shows RdSuccessLogger output.
+3. Upload outside all prefixes → no new Lambda invoke.
+
+### SFTP troubleshooting
+
+| Issue | Check |
+|-------|--------|
+| Connection timeout | `sftp_allowed_cidr_blocks`; security group |
+| Lambda not triggered | S3 key prefix; EventBridge rules unchanged |
+| Cross-account bucket | [env/sftp-cross-account-bucket-policy.json.example](env/sftp-cross-account-bucket-policy.json.example) |
+
 ## Destroy
 
 ```powershell

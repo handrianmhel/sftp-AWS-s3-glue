@@ -1,0 +1,30 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowSFTPGoEc2RoleListBucket",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "REPLACE_SFTPGO_EC2_ROLE_ARN"
+      },
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "arn:aws:s3:::REPLACE_BUCKET_NAME"
+    },
+    {
+      "Sid": "AllowSFTPGoEc2RoleObjectAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "REPLACE_SFTPGO_EC2_ROLE_ARN"
+      },
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:AbortMultipartUpload"
+      ],
+      "Resource": "arn:aws:s3:::REPLACE_BUCKET_NAME/*"
+    }
+  ]
+}

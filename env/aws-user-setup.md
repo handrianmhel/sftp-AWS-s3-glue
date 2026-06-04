@@ -103,6 +103,15 @@ aws sts get-caller-identity
 
 ---
 
+## Difference of Terraform profile & EC2 instance profile
+
+| Who | Credentials |
+|-----|-------------|
+| **You** running `terraform apply` | `AWS_PROFILE` / `~/.aws/credentials` (this guide) |
+| **SFTPGo on EC2** writing to S3 | EC2 **instance profile** `${name_prefix}-sftpgo-ec2`. No keys in the repo |
+
+---
+
 ## Step 6 — Map profiles to Terraform var-files
 
 | When testing… | `AWS_PROFILE` | Var-file (after copy example → `.tfvars`) |

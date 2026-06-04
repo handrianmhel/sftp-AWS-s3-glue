@@ -3,3 +3,6 @@ use_existing_bucket = true
 bucket_name         = "rccglobe-demo-bucket"
 object_prefixes     = ["public-folder/", "restricted-folder/"]
 name_prefix         = "sftp-s3-glue-rd"
+
+# SFTP: deploy in bucket owner account, or use cross-account bucket policy:
+# env/sftp-cross-account-bucket-policy.json.example with terraform output sftpgo_ec2_role_arn

@@ -3,5 +3,9 @@ use_existing_bucket = false
 object_prefixes     = ["raw/"]
 name_prefix         = "sftp-s3-glue-rd"
 
+enable_sftp = true
+# Required when enable_sftp = true (replace this w/public IP /32:)
+# sftp_allowed_cidr_blocks = ["203.0.113.10/32"]
+
 # Optional override for new bucket name (must be globally unique):
 # bucket_name = "my-custom-bucket-name"
