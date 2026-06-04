@@ -14,6 +14,10 @@ bin/
 obj/
 dist/
 
+# Local Lambda invoke artifacts
+infra/terraform/lister-payload.json
+infra/terraform/list-response.json
+
 # Secrets / env
 .env
 .env.*
