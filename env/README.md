@@ -29,10 +29,10 @@ terraform apply -var-file=..\..\env\rcc-demo-apse1.tfvars
 
 ## Example targets
 
-| File | Mode | Bucket | Prefixes |
-|------|------|--------|----------|
-| `personal-apse1.tfvars.example` | Create new bucket | generated name | `raw/` |
-| `rcc-demo-apse1.tfvars.example` | Existing bucket | `rccglobe-demo-bucket` | `public-folder/`, `restricted-folder/` |
+| File | Mode | Bucket | Prefixes | SFTP |
+|------|------|--------|----------|------|
+| `personal-apse1.tfvars.example` | Create new bucket | generated name | `raw/` | `enable_sftp` + `sftp_allowed_cidr_blocks` |
+| `rcc-demo-apse1.tfvars.example` | Existing bucket | `rccglobe-demo-bucket` | `public-folder/`, `restricted-folder/` | same-account or cross-account policy |
 
 ## Credentials
 
@@ -41,3 +41,5 @@ See [aws-user-setup.md](aws-user-setup.md) for `~/.aws/credentials`, `~/.aws/con
 **Never commit** `env/*.tfvars` or access keys to this repository.
 
 After deploy, test the manual S3 lister: `terraform output bucket_lister_function_name`. See the **BucketLister (manual invoke)** section in [README.md](../README.md).
+
+SFTP: `terraform output sftp_host`. See **SFTP / FileZilla** in [README.md](../README.md). Cross-account bucket policy: [sftp-cross-account-bucket-policy.json.example](sftp-cross-account-bucket-policy.json.example).
