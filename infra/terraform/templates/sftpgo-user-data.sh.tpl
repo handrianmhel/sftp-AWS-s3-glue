@@ -12,11 +12,11 @@ echo "SFTPGo bootstrap starting (version $SFTPGO_VERSION)"
 
 dnf install -y wget jq
 
-RPM_URL="https://github.com/drakkan/sftpgo/releases/download/v$${SFTPGO_VERSION}/sftpgo_$${SFTPGO_VERSION}_linux_amd64.rpm"
+RPM_URL="https://github.com/drakkan/sftpgo/releases/download/v$${SFTPGO_VERSION}/sftpgo-$${SFTPGO_VERSION}-1.x86_64.rpm"
 wget -q -O /tmp/sftpgo.rpm "$RPM_URL"
 dnf install -y /tmp/sftpgo.rpm
 
-install -d -m 0750 -o sftpgo -g sftpgo /var/lib/sftpgo /etc/sftpgo
+install -d -m 0750 -o sftpgo -g sftpgo /var/lib/sftpgo /var/lib/sftpgo/tmp /var/lib/sftpgo/data/upload /etc/sftpgo
 
 cat > /etc/sftpgo/sftpgo.json <<'SFTPGOCFG'
 ${sftpgo_config}
@@ -26,7 +26,21 @@ chown sftpgo:sftpgo /etc/sftpgo/sftpgo.json
 
 if [[ ! -f /var/lib/sftpgo/sftpgo.db ]]; then
   sftpgo initprovider -c /etc/sftpgo/sftpgo.json
+  chown sftpgo:sftpgo /var/lib/sftpgo/sftpgo.db
 fi
+
+ADMIN_PASS="$(openssl rand -base64 18)"
+install -d -m 0755 /etc/systemd/system/sftpgo.service.d
+cat > /etc/systemd/system/sftpgo.service.d/default-admin.conf <<EOF
+[Service]
+Environment="SFTPGO_DEFAULT_ADMIN_USERNAME=$ADMIN_USER"
+Environment="SFTPGO_DEFAULT_ADMIN_PASSWORD=$ADMIN_PASS"
+EOF
+systemctl daemon-reload
+
+# SFTPGo binds SFTP on port 22; Amazon Linux sshd uses the same port. Admin access is via SSM.
+systemctl stop sshd
+systemctl disable sshd
 
 systemctl enable sftpgo
 systemctl restart sftpgo
@@ -37,11 +51,6 @@ for i in $(seq 1 60); do
   fi
   sleep 2
 done
-
-ADMIN_PASS="$(openssl rand -base64 18)"
-if ! sftpgo admin reset "$ADMIN_USER" "$ADMIN_PASS" -c /etc/sftpgo/sftpgo.json; then
-  echo "WARN: admin reset failed; use sftpgo admin reset manually."
-fi
 
 CREDS_FILE="/root/sftpgo-setup-credentials.txt"
 {
@@ -88,8 +97,8 @@ USER_PAYLOAD="$(jq -n \
     status: 1,
     username: $user,
     password: $pass,
-    permissions: ["/*"],
-    home_dir: "/",
+    permissions: {"/": ["*"]},
+    home_dir: "/var/lib/sftpgo/data/upload",
     filesystem: {provider: 1, s3config: {bucket: $bucket, region: $region, key_prefix: $prefix}},
     virtual_folders: $vfs
   }')"
