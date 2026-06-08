@@ -36,6 +36,20 @@
 # sftp_enable_admin_ui_ingress = true
 # sftpgo_version = "2.6.6"
 
+# enable_sftp_pull = false
+# sftp_pull_schedule = "rate(5 minutes)"
+# sftp_pull_remote_path = "/incoming"
+# sftp_pull_s3_prefix = "raw/"
+# sftp_pull_max_file_bytes = 104857600
+# sftp_pull_timeout = 300
+# sftp_pull_memory = 512
+# sftp_pull_ssm_prefix = ""  # defaults to /${name_prefix}/sftp-pull
+
+# enable_sftp_pull_stub = false
+# sftp_pull_allowed_cidr_blocks = ["203.0.113.10/32"]
+# sftp_pull_stub_instance_type = "t3.micro"
+# sftp_pull_stub_username = "sftp-pull"
+
 # tags = {
 #   Project = "sftp-AWS-s3-glue"
 #   Phase   = "1-RD"

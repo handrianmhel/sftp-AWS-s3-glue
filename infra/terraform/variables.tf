@@ -149,9 +149,113 @@ variable "tags" {
   }
 }
 
+variable "enable_sftp_pull" {
+  description = "Deploy scheduled SftpPullIngest Lambda (SFTP client -> S3 raw/)"
+  type        = bool
+  default     = false
+}
+
+variable "sftp_pull_schedule" {
+  description = "EventBridge schedule expression for SFTP pull Lambda"
+  type        = string
+  default     = "rate(5 minutes)"
+}
+
+variable "sftp_pull_remote_path" {
+  description = "Remote SFTP directory to list and pull files from"
+  type        = string
+  default     = "/incoming"
+}
+
+variable "sftp_pull_s3_prefix" {
+  description = "S3 key prefix for pulled files (must match EventBridge object_prefixes)"
+  type        = string
+  default     = "raw/"
+}
+
+variable "sftp_pull_max_file_bytes" {
+  description = "Reject remote files larger than this many bytes"
+  type        = number
+  default     = 104857600
+}
+
+variable "sftp_pull_timeout" {
+  description = "SftpPullIngest Lambda timeout in seconds"
+  type        = number
+  default     = 300
+}
+
+variable "sftp_pull_memory" {
+  description = "SftpPullIngest Lambda memory in MB"
+  type        = number
+  default     = 512
+}
+
+variable "sftp_pull_use_vpc" {
+  description = "Run SftpPullIngest Lambda inside a VPC (requires subnet and security group IDs)"
+  type        = bool
+  default     = false
+}
+
+variable "sftp_pull_vpc_subnet_ids" {
+  description = "Subnet IDs when sftp_pull_use_vpc is true"
+  type        = list(string)
+  default     = []
+}
+
+variable "sftp_pull_vpc_security_group_ids" {
+  description = "Security group IDs when sftp_pull_use_vpc is true"
+  type        = list(string)
+  default     = []
+}
+
+variable "sftp_pull_ssm_prefix" {
+  description = "SSM parameter path prefix for SFTP pull secrets (leading slash optional)"
+  type        = string
+  default     = ""
+}
+
+variable "enable_sftp_pull_stub" {
+  description = "Deploy optional EC2 OpenSSH SFTP stub for Phase 3 testing"
+  type        = bool
+  default     = false
+}
+
+variable "sftp_pull_stub_instance_type" {
+  description = "EC2 instance type for SFTP pull stub"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "sftp_pull_stub_username" {
+  description = "SFTP username created on the pull stub EC2 instance"
+  type        = string
+  default     = "sftp-pull"
+}
+
+variable "sftp_pull_allowed_cidr_blocks" {
+  description = "CIDR blocks allowed to reach the SFTP pull stub on port 22"
+  type        = list(string)
+  default     = []
+}
+
 check "sftp_requires_cidr_when_enabled" {
   assert {
     condition     = !var.enable_sftp || length(var.sftp_allowed_cidr_blocks) > 0
     error_message = "sftp_allowed_cidr_blocks must be set when enable_sftp is true (e.g. YOUR.PUBLIC.IP/32 in env/*.tfvars)."
+  }
+}
+
+check "sftp_pull_stub_requires_cidr_when_enabled" {
+  assert {
+    condition     = !var.enable_sftp_pull_stub || length(var.sftp_pull_allowed_cidr_blocks) > 0
+    error_message = "sftp_pull_allowed_cidr_blocks must be set when enable_sftp_pull_stub is true."
+  }
+}
+
+check "sftp_pull_vpc_requires_network" {
+  assert {
+    condition     = !var.sftp_pull_use_vpc || (length(var.sftp_pull_vpc_subnet_ids) > 0 && length(var.sftp_pull_vpc_security_group_ids) > 0)
+    error_message = "sftp_pull_vpc_subnet_ids and sftp_pull_vpc_security_group_ids are required when sftp_pull_use_vpc is true."
   }
 }
