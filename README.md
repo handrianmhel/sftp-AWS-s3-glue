@@ -221,6 +221,25 @@ Bootstrap passwords: `/root/sftpgo-setup-credentials.txt` on the instance (SSM S
 | Lambda not triggered | S3 key prefix; EventBridge rules unchanged |
 | Cross-account bucket | [env/sftp-cross-account-bucket-policy.json.example](env/sftp-cross-account-bucket-policy.json.example) |
 
+## Phase 2b — Local SFTP push
+
+Local Windows ingest: optional FileZilla → OpenSSH on **this PC** → drop folder → PowerShell bridge → `aws s3 cp` → same S3 bucket and EventBridge path as Phase 1/2. **No new AWS resources** for v1.
+
+| Mode | Summary |
+|------|---------|
+| **2b-minimal** | `aws s3 cp` or `scripts/local-sftp-upload-to-s3.ps1` → `s3://bucket/raw/` |
+| **2b-full** | FileZilla SFTP to `127.0.0.1` → `C:\sftp-drop\raw\` → bridge script |
+
+### Setup
+
+1. Copy `env/local-upload.env.example` → `env/local-upload.env` (gitignored).
+2. Set `AWS_PROFILE`, `S3_BUCKET` (or leave empty to read `terraform output bucket_name`).
+3. Run `.\scripts\test-phase-2b.ps1` or `.\scripts\local-sftp-upload-to-s3.ps1`.
+
+Guides: [docs/phase-2b-local-openssh-sftp.md](docs/phase-2b-local-openssh-sftp.md), [docs/phase-2b-verification.md](docs/phase-2b-verification.md).
+
+Optional: set `enable_sftp = false` in tfvars while testing 2b locally to avoid EC2 SFTPGo cost.
+
 ## Destroy
 
 ```powershell
@@ -254,15 +273,17 @@ aws logs tail /aws/lambda/FUNCTION_NAME --follow --region ap-southeast-1
 
 ```
 ├── README.md
+├── scripts/                 # Phase 2b local upload bridge
+├── env/local-upload.env.example
 ├── infra/terraform/
 ├── src/lambda/RdSuccessLogger/
 ├── src/lambda/BucketLister/
 └── dist/                    # gitignored — lambda-publish, bucket-lister-publish
 ```
 
-**In scope:** S3 bucket, EventBridge, .NET 8 Lambda (logger + manual lister), CloudWatch Logs.
+**In scope:** S3 bucket, EventBridge, .NET 8 Lambda (logger + manual lister + optional SFTP pull), CloudWatch Logs, EC2 SFTPGo (Phase 2), local push scripts (Phase 2b).
 
-**Out of scope:** SFTP, Transfer Family, Glue, Step Functions, VPC, CI/CD, DLQ.
+**Out of scope:** AWS Transfer Family, Glue, Step Functions, VPC (except optional pull stub), CI/CD, DLQ.
 
 ## Recent Personal Test
 
