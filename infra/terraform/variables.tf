@@ -191,6 +191,13 @@ variable "sftp_pull_memory" {
   default     = 512
 }
 
+variable "sftp_pull_reserved_concurrency" {
+  description = "Reserved concurrent executions (set 1 to avoid overlapping pulls when account unreserved pool allows)"
+  type        = number
+  default     = null
+  nullable    = true
+}
+
 variable "sftp_pull_use_vpc" {
   description = "Run SftpPullIngest Lambda inside a VPC (requires subnet and security group IDs)"
   type        = bool

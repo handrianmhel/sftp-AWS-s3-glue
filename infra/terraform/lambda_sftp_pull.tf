@@ -160,7 +160,7 @@ resource "aws_lambda_function" "sftp_pull" {
   handler                        = "SftpPullIngest::SftpPullIngest.Function::FunctionHandler"
   runtime                        = var.lambda_runtime
   architectures                  = var.lambda_architectures
-  reserved_concurrent_executions = 1
+  reserved_concurrent_executions = var.sftp_pull_reserved_concurrency
 
   filename         = data.archive_file.sftp_pull_zip[0].output_path
   source_code_hash = data.archive_file.sftp_pull_zip[0].output_base64sha256
