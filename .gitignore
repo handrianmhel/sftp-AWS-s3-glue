@@ -21,17 +21,26 @@ infra/terraform/list-response.json
 # Secrets / env
 .env
 .env.*
+env/local-upload.env
 *.pem
 credentials.json
+
+# Phase 2b local
+scripts/logs/
+*.part
 
 # OS / IDE
 .DS_Store
 *.swp
 *.suo
 docs/*
+!docs/phase-2b-*.md
+!docs/phase-3-*.md
 Thumbs.db
 references/*
 /docs/*
+!/docs/phase-2b-*.md
+!/docs/phase-3-*.md
 .cursor/
 /references/*
 .cursor/**
