@@ -70,6 +70,41 @@ output "sftpgo_ec2_role_arn" {
   value       = var.enable_sftp ? aws_iam_role.sftpgo_ec2[0].arn : null
 }
 
+output "sftp_pull_function_name" {
+  description = "Scheduled SFTP pull ingest Lambda function name"
+  value       = var.enable_sftp_pull ? aws_lambda_function.sftp_pull[0].function_name : null
+}
+
+output "sftp_pull_schedule_rule_name" {
+  description = "EventBridge schedule rule name for SFTP pull"
+  value       = var.enable_sftp_pull ? aws_cloudwatch_event_rule.sftp_pull_schedule[0].name : null
+}
+
+output "sftp_pull_log_group" {
+  description = "CloudWatch log group for SftpPullIngest"
+  value       = var.enable_sftp_pull ? aws_cloudwatch_log_group.sftp_pull[0].name : null
+}
+
+output "sftp_pull_ssm_parameter_names" {
+  description = "SSM parameter names for SFTP pull connection (populate after apply)"
+  value = var.enable_sftp_pull ? {
+    host        = aws_ssm_parameter.sftp_pull_host[0].name
+    port        = aws_ssm_parameter.sftp_pull_port[0].name
+    username    = aws_ssm_parameter.sftp_pull_username[0].name
+    private_key = aws_ssm_parameter.sftp_pull_private_key[0].name
+  } : null
+}
+
+output "sftp_pull_stub_host" {
+  description = "Public IP (EIP) of the optional SFTP pull stub EC2 instance"
+  value       = var.enable_sftp_pull_stub ? aws_eip.sftp_pull_stub[0].public_ip : null
+}
+
+output "sftp_pull_stub_instance_id" {
+  description = "EC2 instance ID of the optional SFTP pull stub"
+  value       = var.enable_sftp_pull_stub ? aws_instance.sftp_pull_stub[0].id : null
+}
+
 output "sftp_setup_notes" {
   description = "Post-deploy SFTP setup hints"
   value = var.enable_sftp ? join(" ", [

@@ -8,7 +8,9 @@ locals {
 
   lambda_function_name          = "${var.name_prefix}-success-logger"
   bucket_lister_function_name   = "${var.name_prefix}-bucket-lister"
+  sftp_pull_function_name       = "${var.name_prefix}-sftp-pull"
   sftpgo_ec2_role_name          = "${var.name_prefix}-sftpgo-ec2"
+  sftp_pull_ssm_prefix = var.sftp_pull_ssm_prefix != "" ? trim(var.sftp_pull_ssm_prefix, "/") : "${var.name_prefix}/sftp-pull"
 
   # SFTP virtual path /raw -> S3 prefix raw/
   sftp_virtual_folders = { for p in var.object_prefixes : trim(p, "/") => p }
