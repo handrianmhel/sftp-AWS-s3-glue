@@ -1,7 +1,8 @@
 {
   "common": {
     "idle_timeout": 15,
-    "upload_mode": 0
+    "upload_mode": 0,
+    "temp_path": "/var/lib/sftpgo/tmp"
   },
   "httpd": {
     "bindings": [

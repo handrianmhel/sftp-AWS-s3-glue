@@ -89,6 +89,13 @@ resource "aws_iam_role" "sftpgo_ec2" {
   })
 }
 
+resource "aws_iam_role_policy_attachment" "sftpgo_ssm" {
+  count = var.enable_sftp ? 1 : 0
+
+  role       = aws_iam_role.sftpgo_ec2[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
 resource "aws_iam_role_policy" "sftpgo_s3" {
   count = var.enable_sftp ? 1 : 0
 
