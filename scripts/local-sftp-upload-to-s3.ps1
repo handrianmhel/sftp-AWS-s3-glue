@@ -10,7 +10,7 @@ $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "Get-S3UploadTarget.ps1")
 $cfg = Get-S3UploadTarget -EnvFile $EnvFile
 
-$env:AWS_PROFILE = $cfg.AwsProfile
+if ($cfg.AwsProfile) { $env:AWS_PROFILE = $cfg.AwsProfile } else { Remove-Item Env:AWS_PROFILE -ErrorAction SilentlyContinue }
 $env:AWS_DEFAULT_REGION = $cfg.AwsRegion
 
 $logDir = Join-Path $PSScriptRoot "logs"
