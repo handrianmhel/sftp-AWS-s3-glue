@@ -10,14 +10,14 @@ $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "Get-S3UploadTarget.ps1")
 $cfg = Get-S3UploadTarget -EnvFile $EnvFile
 
-$env:AWS_PROFILE = $cfg.AwsProfile
+if ($cfg.AwsProfile) { $env:AWS_PROFILE = $cfg.AwsProfile } else { Remove-Item Env:AWS_PROFILE -ErrorAction SilentlyContinue }
 $env:AWS_DEFAULT_REGION = $cfg.AwsRegion
 
-if (-not (Test-Path $EnvFile) -and -not $EnvFile) {
-    $defaultEnv = Join-Path (Resolve-Path (Join-Path $PSScriptRoot "..")) "env\local-upload.env"
-    if (-not (Test-Path $defaultEnv)) {
-        throw "Missing env/local-upload.env. Copy env/local-upload.env.example and set S3_BUCKET."
-    }
+$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$defaultEnv = Join-Path $repoRoot "env\local-upload.env"
+if (-not $EnvFile) { $EnvFile = $defaultEnv }
+if (-not (Test-Path $EnvFile)) {
+    Write-Warning "Missing $EnvFile - using defaults and terraform output for S3_BUCKET."
 }
 
 if (-not (Test-Path $cfg.DropPath)) {
@@ -39,4 +39,4 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host ""
 Write-Host "PASS: object exists in S3."
-Write-Host "Within ~2 minutes, check CloudWatch log group /aws/lambda/<lambda_function_name> for RdSuccessLogger success line."
+Write-Host "Within ~2 minutes, check CloudWatch for RdSuccessLogger success log line."
